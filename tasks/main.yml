@@ -1,0 +1,19 @@
+---
+- name: set zabbix proxy facts for agent from proxy
+  set_fact:
+    zabbix_agent_server: "{{ zabbix_agent_server | default(zabbix_proxy_network_address_list|join(','), true) }}"
+    zabbix_agent_serveractive: "{{ zabbix_agent_serveractive | default(zabbix_proxy_network_address, true) }}"
+    cacheable: true
+  when: zabbix_proxy_network_address is defined
+
+- name: set zabbix server facts for agent from server
+  set_fact:
+    zabbix_agent_server: "{{ zabbix_agent_server | default(zabbix_server_network_address, true) }}"
+    zabbix_agent_serveractive: "{{ zabbix_agent_serveractive | default(zabbix_server_network_address, true) }}"
+    cacheable: true
+  when: zabbix_server_network_address is defined and zabbix_proxy_network_address is not defined
+
+- name: set zabbix_agent_hostmetadata
+  set_fact:
+    zabbix_agent_hostmetadata: ":os={{ansible_os_family}}:osn={{zabbix_agent_hostmetadata_osname}}:d={{ansible_distribution}}:dr={{ansible_distribution_release}}:g={{group_names|difference(zabbix_agent_hostmetadata_exclude_groups)|sort|join(':g=')}}:kr={{zabbix_agent_registration_key}}:"
+    cacheble: true

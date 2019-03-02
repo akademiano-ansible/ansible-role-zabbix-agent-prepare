@@ -1,0 +1,3 @@
+---
+zabbix_agent_registration_key:
+zabbix_agent_hostmetadata_exclude_groups: []
